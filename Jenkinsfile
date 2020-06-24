@@ -105,7 +105,7 @@ stage('Docker Push') {
 }
 
 
-stage('Deploy') {
+/* stage('Deploy') {
     if (useDeploy) {
         println "Create container"
         slackSend (channel: '#hiclass-build-deploy-alert', color: '#FFFF00', message: "Deploy START: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
@@ -122,5 +122,27 @@ stage('Deploy') {
     } else {
         println "Docker Deploy Skip"
     }
+} */
+
+stage('Deploy') {
+    if (useDeploy) {
+        println "Create container"
+        slackSend (channel: '#hiclass-build-deploy-alert', color: '#FFFF00', message: "Deploy START: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+        try {
+            sh 'sshpass -p'!#SI0aleldj*)' ssh -T sigongweb@10.1.0.22 -p16215 -oStrictHostKeyChecking=no << EOF 
+            docker pull ${ACR_SERVER}/node_js:${BUILD_NUMBER}
+            docker create --name ${SERVER_NAME}_${BUILD_NUMBER} -p 3000:3000 ${ACR_SERVER}/node_js:${BUILD_NUMBER}
+            docker start ${SERVER_NAME}_${BUILD_NUMBER}
+            exit 
+            EOF'
+            slackSend (channel: '#hiclass-build-deploy-alert', color: '#00FF00', message: "Deploy SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+            }
+        catch (Exception e) {
+            slackSend (channel: '#hiclass-build-deploy-alert', color: '#FF0000', message: "Deploy Error:${e} Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+            }
+    } else {
+        println "Docker Deploy Skip"
+    }
 }
+
 }
