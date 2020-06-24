@@ -1,16 +1,11 @@
-{
-  "name": "nodejs_tutorial_server",
-  "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "start": "nodemon nodejs_tutorial_server.js"
-  },
-  "description": "NodeJS Tutorial Server",
-  "author": {
-    "name": "WonwooKang"
-  },
-  "dependencies": {
-    "express": "^4.16.3",
-    "uuid": "^3.2.1"
-  }
-}
+var express = require('express');
+var app = express();
+const port = 3000;
+
+var server = app.listen(port, function () {
+    console.log("Express server has started on port : "+port);
+});
+
+app.get('/', function (req, res) {
+    res.send('Hello?');
+});
