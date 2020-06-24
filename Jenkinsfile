@@ -2,7 +2,7 @@
 def useDockerBuild = true
 def useDockerPush = true
 def useDeploy = true
-def usePostcheck = true
+
 
 /* stage Flow를 확인할 수 있는 설정.
 예외 발생 시 기본값으로 동작하도록 try-catch 설정 */
@@ -110,9 +110,9 @@ stage('Deploy') {
         println "Create container"
         slackSend (channel: '#hiclass-build-deploy-alert', color: '#FFFF00', message: "Deploy START: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         try {
-            sh 'docker create --name ${SERVER_NAME} -p 3000:3000 node_js:${BUILD_NUMBER}'
+            sh 'docker create --name ${NODEJS} -p 3000:3000 node_js:${BUILD_NUMBER}'
             println "Created container"
-            sh 'docker start ${SERVER_NAME}'
+            sh 'docker start ${NODEJS}'
             slackSend (channel: '#hiclass-build-deploy-alert', color: '#00FF00', message: "Deploy SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
             }
         catch (Exception e) {
