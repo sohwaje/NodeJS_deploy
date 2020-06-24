@@ -131,9 +131,9 @@ stage('Deploy') {
         slackSend (channel: '#hiclass-build-deploy-alert', color: '#FFFF00', message: "Deploy START: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         try {
             sh 'sshpass -p${SSH_PASS} ssh -T sigongweb@10.1.0.22 -p16215 -oStrictHostKeyChecking=no docker login ${ACR_SERVER} -u ${ACR_ID} -p ${ACR_PASSWORD}'
-            sh 'sshpass -p${SSH_PASS} ssh -T sigongweb@10.1.0.22 -p16215 -oStrictHostKeyChecking=no docker pull ${ACR_SERVER}/node_js:${BUILD_NUMBER}'
-            sh 'sshpass -p${SSH_PASS} ssh -T sigongweb@10.1.0.22 -p16215 -oStrictHostKeyChecking=no docker create --name ${SERVER_NAME}_${BUILD_NUMBER} -p 3000:3000 ${ACR_SERVER}/node_js:${BUILD_NUMBER}'
-            sh 'sshpass -p${SSH_PASS} ssh -T sigongweb@10.1.0.22 -p16215 -oStrictHostKeyChecking=no <<EOF docker start ${SERVER_NAME}_${BUILD_NUMBER}'
+            sh 'docker pull ${ACR_SERVER}/node_js:${BUILD_NUMBER}'
+            sh 'docker create --name ${SERVER_NAME}_${BUILD_NUMBER} -p 3000:3000 ${ACR_SERVER}/node_js:${BUILD_NUMBER}'
+            sh 'docker start ${SERVER_NAME}_${BUILD_NUMBER}'
             slackSend (channel: '#hiclass-build-deploy-alert', color: '#00FF00', message: "Deploy SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
             }
         catch (Exception e) {
