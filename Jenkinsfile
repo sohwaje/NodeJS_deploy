@@ -1,6 +1,4 @@
 /*[1] 파이프라인에서 진행할 각 stage를 정의하는 파라미터 */
-def useNpminstall = true    /* Test 단계 사용 유무 */
-def useBuild = true
 def useDockerBuild = true
 def useDockerPush = true
 def useDeploy = true
@@ -10,22 +8,6 @@ def usePostcheck = true
 예외 발생 시 기본값으로 동작하도록 try-catch 설정 */
 node(''){
 stage("Flow Check", {
-    try {
-        println "  NPM INSTALL = $NPM_INSTALL"
-        useNpminstall = "$NPM_INSTALL" == "true"
-    }
-    catch (MissingPropertyException e) {
-        println "  useNpminstall FLOW = true"
-    }
-
-    try {
-        println "  BUILD FLOW = $USE_BUILD"
-        useBuild = "$USE_BUILD" == "true"
-    }
-    catch (MissingPropertyException e) {
-        println "  BUILD FLOW = true"
-    }
-
     try {
         println "  DOCKER BUILD = $USE_DOCKERBUILD"
         useDockerBuild = "$USE_DOCKERBUILD" == "true"
@@ -49,33 +31,23 @@ stage("Flow Check", {
     catch (MissingPropertyException e) {
         println "  DOCKER DEPLOY = true"
     }
-
-    try {
-        println "  POST CHECK = $POST_CHECK"
-        usePostcheck = "$POST_CHECK" == "true"
-    }
-    catch (MissingPropertyException e) {
-        println "  POST CHECK = true"
-    }
 })
 
 /* 파라미터 검증 단계. 필수 파라미터들은 예외 처리를 하지 않음 */
 stage("Parameter Check", {
     println "  GIT_URL = $GIT_URL"
     println "  BRANCH_SELECTOR = $BRANCH_SELECTOR"
-    println "  JAVA_VERSION = $JAVA_VERSION"
     println "  ACR_ID = $ACR_ID"
     println "  ACR_PASSWORD = $ACR_PASSWORD"
     println "  ACR_SERVER = $ACR_SERVER"
-    env.JAVA_HOME="${tool name : JAVA_VERSION}"
-    env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
+    println "  SERVER_NAME = $NODEJS"
 
 })
 
 /* 넘겨 받은 GitUrl과 Branch를 사용하여 Git CheckOut 을 실행.
 Test나 Build 중 하나라도 Flow에 포함되어 있다면 이 단계가 실행 */
 stage("Git CheckOut", {
-    if (useTest || useBuild) {
+    if (useDockerBuild || useDockerPush) {
         println "Git CheckOut Started"
         checkout(
                 [
@@ -94,49 +66,13 @@ stage("Git CheckOut", {
 })
 
 /* 구체적인 테스트 - 빌드 - 배포 - 실행 파이프라인 */
-stage('NPM install') {
-    if (useTest) {
-        println "Test Started"
-        slackSend (channel: '#hiclass-build-deploy-alert', color: '#FFFF00', message: "TEST START: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-        try {
-            sh '/opt/maven/apache-maven-3.6.2/bin/mvn test -Pstage'
-            slackSend (channel: '#hiclass-build-deploy-alert', color: '#00FF00', message: "TEST SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-        }
-        catch (Exception e) {
-            slackSend (channel: '#hiclass-build-deploy-alert', color: '#FF0000', message: "TEST ${e}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-        } finally {
-            junit '**/target/surefire-reports/TEST-*.xml'
-        }
-            println "Test End"
-    } else {
-        println "Test Skip"
-    }
-}
-
-stage('Source Build') {
-    if (useBuild) {
-        println "Build Started"
-        slackSend (channel: '#hiclass-build-deploy-alert', color: '#FFFF00', message: "BUILD START: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-        try {
-            sh '/opt/maven/apache-maven-3.6.2/bin/mvn install -Pstage'
-            slackSend (channel: '#hiclass-build-deploy-alert', color: '#00FF00', message: "BUILD SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-            println "Build End"
-        }
-        catch (Exception e) {
-            slackSend (channel: '#hiclass-build-deploy-alert', color: '#00FF00', message: "BUILD Error:${e} Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-        }
-    } else {
-        println "Build Skip"
-    }
-}
-
 
 stage('Docker Build') {
     if (useDockerBuild) {
         println "Docker Build"
         slackSend (channel: '#hiclass-build-deploy-alert', color: '#FFFF00', message: "Docker BUILD START: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         try {
-            sh 'docker image build -t ${ACR_SERVER}/hi-class-pro-api:${BUILD_NUMBER} .'
+            sh 'docker image build -t ${ACR_SERVER}/node_js:${BUILD_NUMBER} .'
             slackSend (channel: '#hiclass-build-deploy-alert', color: '#00FF00', message: "Docker BUILD SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
             println "Docker Build End"
         }
@@ -156,7 +92,7 @@ stage('Docker Push') {
         try {
             sh 'docker login ${ACR_SERVER} -u ${ACR_ID} -p ${ACR_PASSWORD}'
             println "Docker Push"
-            sh 'docker push ${ACR_SERVER}/hi-class-pro-api:${BUILD_NUMBER}'
+            sh 'docker push ${ACR_SERVER}/node_js:${BUILD_NUMBER}'
             println "Docker Push End"
             slackSend (channel: '#hiclass-build-deploy-alert', color: '#00FF00', message: "Docker PUSH SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
     }
@@ -171,12 +107,12 @@ stage('Docker Push') {
 
 stage('Deploy') {
     if (useDeploy) {
-        println "Replace build number in yml"
+        println "Create container"
         slackSend (channel: '#hiclass-build-deploy-alert', color: '#FFFF00', message: "Deploy START: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         try {
-            sh 'sed -i "s/hiclass.azurecr.io\\/hi-class-pro-api.*/hiclass.azurecr.io\\/hi-class-pro-api:${BUILD_NUMBER}/g" hiclass-pro-api.yml'
-            println "Replace End"
-            sh 'kubectl apply -f hiclass-pro-api.yml --namespace default --kubeconfig /var/lib/jenkins/config_pro'
+            sh 'docker create --name ${SERVER_NAME} -p 3000:3000 node_js:${BUILD_NUMBER}'
+            println "Created container"
+            sh 'docker start ${SERVER_NAME}'
             slackSend (channel: '#hiclass-build-deploy-alert', color: '#00FF00', message: "Deploy SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
             }
         catch (Exception e) {
