@@ -111,9 +111,9 @@ stage('Deploy') {
         slackSend (channel: '#hiclass-build-deploy-alert', color: '#FFFF00', message: "Deploy START: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         try {
             sh 'docker pull ${ACR_SERVER}/node_js:${BUILD_NUMBER}'
-            sh 'docker create --name ${SERVER_NAME} -p 3000:3000 ${ACR_SERVER}/node_js:${BUILD_NUMBER}'
+            sh 'docker create --name ${SERVER_NAME}_${BUILD_NUMBER} -p 3000:3000 ${ACR_SERVER}/node_js:${BUILD_NUMBER}'
             println "Created container"
-            sh 'docker start ${SERVER_NAME}'
+            sh 'docker start ${SERVER_NAME}_${BUILD_NUMBER}'
             slackSend (channel: '#hiclass-build-deploy-alert', color: '#00FF00', message: "Deploy SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
             }
         catch (Exception e) {
