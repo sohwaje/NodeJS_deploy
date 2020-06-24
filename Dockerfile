@@ -13,7 +13,7 @@ ADD ./ /app
 
 #패키지파일들 받기
 RUN npm install
-npm install nodemon -g
+RUN npm install nodemon -g
 
 #배포버젼으로 설정 - 이 설정으로 환경을 나눌 수 있습니다.
 ENV NODE_ENV=production
