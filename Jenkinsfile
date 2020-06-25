@@ -119,6 +119,7 @@ stage('Deploy') {
         try {
             sh'''
             sshpass -p${SSH_PASS} ssh -T sigongweb@10.1.0.22 -p16215 -oStrictHostKeyChecking=no<<-EOF
+            docker stop ${SERVER_NAME}_pro
             docker login ${ACR_SERVER} -u ${ACR_ID} -p ${ACR_PASSWORD}
             docker pull ${ACR_SERVER}/node_js:${BUILD_NUMBER}
             docker create --name ${SERVER_NAME}_pro -p 3000:3000 ${ACR_SERVER}/node_js:${BUILD_NUMBER}
