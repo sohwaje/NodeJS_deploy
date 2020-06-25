@@ -71,13 +71,16 @@ stage("Git CheckOut", {
 stage('Docker Build') {
     if (useDockerBuild) {
         println "Docker Build"
+       /* SLACK Configuration */
         slackSend (channel: '#hiclass-build-deploy-alert', color: '#FFFF00', message: "Docker BUILD START: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         try {
             sh 'docker image build -t ${ACR_SERVER}/node_js:${BUILD_NUMBER} .'
+       /* SLACK Configuration */
             slackSend (channel: '#hiclass-build-deploy-alert', color: '#00FF00', message: "Docker BUILD SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
             println "Docker Build End"
         }
         catch (Exception e) {
+        /* SLACK Configuration */
             slackSend (channel: '#hiclass-build-deploy-alert', color: '#FF0000', message: "Docker BUILD Error:${e} Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
             }
      } else {
@@ -89,15 +92,18 @@ stage('Docker Build') {
 stage('Docker Push') {
     if (useDockerPush) {
         println "Docker Login"
+        /* SLACK Configuration */
         slackSend (channel: '#hiclass-build-deploy-alert', color: '#FFFF00', message: "Docker PUSH START: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         try {
             sh 'docker login ${ACR_SERVER} -u ${ACR_ID} -p ${ACR_PASSWORD}'
             println "Docker Push"
             sh 'docker push ${ACR_SERVER}/node_js:${BUILD_NUMBER}'
             println "Docker Push End"
+        /* SLACK Configuration */
             slackSend (channel: '#hiclass-build-deploy-alert', color: '#00FF00', message: "Docker PUSH SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
     }
         catch (Exception e) {
+        /* SLACK Configuration */
             slackSend (channel: '#hiclass-build-deploy-alert', color: '#FF0000', message: "Docker PUSH Error:${e} Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         }
     } else {
@@ -109,15 +115,18 @@ stage('Docker Push') {
 stage('Deploy') {
     if (useDeploy) {
         println "Create container"
+        /* SLACK Configuration */
         slackSend (channel: '#hiclass-build-deploy-alert', color: '#FFFF00', message: "Deploy START: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         try {
             sh """sshpass -p${SSH_PASS} ssh -T sigongweb@10.1.0.22 -p16215 -oStrictHostKeyChecking=no docker login ${ACR_SERVER} -u ${ACR_ID} -p ${ACR_PASSWORD}
             pull ${ACR_SERVER}/node_js:${BUILD_NUMBER}
             docker create --name ${SERVER_NAME}_${BUILD_NUMBER} -p 3000:3000 ${ACR_SERVER}/node_js:${BUILD_NUMBER}
             docker start ${SERVER_NAME}_${BUILD_NUMBER}"""
+        /* SLACK Configuration */
             slackSend (channel: '#hiclass-build-deploy-alert', color: '#00FF00', message: "Deploy SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
             }
         catch (Exception e) {
+         /* SLACK Configuration */
             slackSend (channel: '#hiclass-build-deploy-alert', color: '#FF0000', message: "Deploy Error:${e} Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
             }
     } else {
