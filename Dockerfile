@@ -14,12 +14,10 @@ ADD ./ /app
 #패키지파일들 받기
 RUN npm install
 RUN npm install nodemon -g
-
+#서버 실행 후 컨테이너가 살아 있는다는 메세지를 slack에 전송
+RUN sh send_alive_msg_to_slack.sh
 #배포버젼으로 설정 - 이 설정으로 환경을 나눌 수 있습니다.
 ENV NODE_ENV=production
-
-#서버 실행 후 컨테이너가 살아 있는다는 메세지를 slack에 전송
-CMD sh send_alive_msg_to_slack.sh
 
 #서버실행
 CMD node nodejs_tutorial_server.js
