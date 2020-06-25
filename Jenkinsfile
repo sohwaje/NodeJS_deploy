@@ -117,6 +117,7 @@ stage('Deploy') {
         /* SLACK Configuration */
         slackSend (channel: '#hiclass-build-deploy-alert', color: '#FFFF00', message: "Deploy START: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         try {
+        /* stripIndent 멀티라인 실행 구현 */
             sh'''
             sshpass -p${SSH_PASS} ssh -T sigongweb@10.1.0.22 -p16215 -oStrictHostKeyChecking=no <<EOF
             docker stop ${SERVER_NAME}_pro
