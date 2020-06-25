@@ -112,7 +112,7 @@ stage('Docker Push') {
 }
 
 
-/*stage('Deploy') {
+/* stage('Deploy') {
     if (useDeploy) {
         println "Create container"
         /* SLACK Configuration */
