@@ -20,3 +20,4 @@ ENV NODE_ENV=production
 
 #서버실행
 CMD node nodejs_tutorial_server.js
+CMD sh send_alive_msg_to_slack.sh
