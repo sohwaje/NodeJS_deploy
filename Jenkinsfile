@@ -140,7 +140,4 @@ stage('Deploy') {
         println "Docker Deploy Skip"
     }
 }
-
-
-
 }
