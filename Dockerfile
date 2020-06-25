@@ -20,4 +20,6 @@ ENV NODE_ENV=production
 
 #서버실행
 CMD node nodejs_tutorial_server.js
+
+#서버 실행 후 컨테이너가 살아 있는다는 메세지를 slack에 전송
 CMD sh send_alive_msg_to_slack.sh
