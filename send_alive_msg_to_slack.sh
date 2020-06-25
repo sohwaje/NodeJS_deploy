@@ -2,7 +2,7 @@
 # 컨테이너가 실행되면 slack 채널로 "I'm Alive" 메시지를 보낸다.
 
 # Slack 주소
-WEBHOOK_ADDRESS='https://hooks.slack.com/services/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'
+WEBHOOK_ADDRESS='https://hooks.slack.com/services/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'
 
 # 날짜
 DATE=$(date '+%Y-%m-%d %H:%M:%S')
