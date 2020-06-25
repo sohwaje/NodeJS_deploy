@@ -118,6 +118,7 @@ stage('Deploy') {
         slackSend (channel: '#hiclass-build-deploy-alert', color: '#FFFF00', message: "Deploy START: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         try {
         /* stripIndent 멀티라인 실행 구현 */
+        /* 배포할 서버에 ssh로 로그인 -> 기존 도커 컨테이너 중지 및 삭제 -> 도커 레지스트리 로그인 -> 이미지 가져오기 -> 컨테이너 생성 -> 컨테이너 실행 */
             sh'''
             sshpass -p${SSH_PASS} ssh -T sigongweb@10.1.0.22 -p16215 -oStrictHostKeyChecking=no <<EOF
             docker stop ${SERVER_NAME}_pro
