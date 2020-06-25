@@ -132,6 +132,6 @@ stage('Docker Push') {
     } else {
         println "Docker Deploy Skip"
     }
-}*/
+} */
 
 }
