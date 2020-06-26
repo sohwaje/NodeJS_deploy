@@ -13,7 +13,7 @@ URL_STATUS_Error="{\"text\": \"ERROR: no response:$DATE\"}"
 URL="http://127.0.0.1:3000"
 
 # URL 체크
-function check() {
+function check(){
   if [ $? == 0 ]; then
     curl -X POST -H 'Content-type: application/json' --data "$URL_STATUS_OK" $WEBHOOK_ADDRESS > /dev/null 2>&1
   else
