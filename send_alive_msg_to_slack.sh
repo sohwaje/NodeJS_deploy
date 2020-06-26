@@ -10,6 +10,8 @@ START_CONTAINER="{\"text\": \"SUCCESS: Start Container. Date:  $DATE\"}"
 URL_STATUS_OK="{\"text\": \"SUCCESS: Container is running. Date:  $DATE\"}"
 URL_STATUS_Error="{\"text\": \"ERROR: no response Date:  $DATE\"}"
 
+# URL
+URL="http://127.0.0.1:3000"
 # URL 체크
 function check {
   if [ $? == 0 ]; then
@@ -27,4 +29,5 @@ function check {
 }
 
 # check 함수 실행
+curl -s -o "/dev/null" $1 $URL
 check
