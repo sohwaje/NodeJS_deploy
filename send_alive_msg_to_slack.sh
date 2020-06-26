@@ -6,8 +6,8 @@ WEBHOOK_ADDRESS='https://hooks.slack.com/services/TS56KT49Z/B015U1J13ML/CTNOZpL5
 # 날짜
 DATE=$(date '+%Y-%m-%d %H:%M:%S')
 # json 형식의 ALERT 메시지
-URL_STATUS_OK="{\"text\": \"SUCCESS: Container is running:$DATE\"}"
-URL_STATUS_Error="{\"text\": \"ERROR: no response:$DATE\"}"
+URL_STATUS_OK="{\"text\": \"SUCCESS: Container is running: $DATE\"}"
+URL_STATUS_Error="{\"text\": \"ERROR: no response: $DATE\"}"
 
 # URL
 URL="http://127.0.0.1:3000"
