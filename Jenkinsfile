@@ -131,6 +131,7 @@ stage('Deploy') {
             docker create --name ${CONTAINER_NAME}_pro -p 3000:3000 ${ACR_SERVER}/node_js:${BUILD_NUMBER}
             docker start ${CONTAINER_NAME}_pro
             sleep 20
+            echo "docker exec ${CONTAINER_NAME}_pro ./send_alive_msg_to_slack.sh > /dev/null 2>&1"
             docker exec ${CONTAINER_NAME}_pro ./send_alive_msg_to_slack.sh > /dev/null 2>&1
             echo "done"
             EOF
