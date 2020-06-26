@@ -129,6 +129,7 @@ stage('Deploy') {
             docker start ${SERVER_NAME}_pro
             sleep 20
             docker exec ${SERVER_NAME}_pro ./send_alive_msg_to_slack.sh > /dev/null 2>&1
+            echo "done"
             EOF
             '''.stripIndent()
         /* SLACK Configuration */
