@@ -40,7 +40,7 @@ stage("Parameter Check", {
     println "  ACR_ID = $ACR_ID"
     println "  ACR_PASSWORD = $ACR_PASSWORD"
     println "  ACR_SERVER = $ACR_SERVER"
-    println "  SERVER_NAME = $SERVER_NAME"
+    println "  CONTAINER_NAME = $CONTAINER_NAME"
     println "  SSH_PASS = $SSH_PASS"
 
 })
@@ -121,14 +121,14 @@ stage('Deploy') {
         /* 배포할 서버에 ssh로 로그인 -> 기존 도커 컨테이너 중지 및 삭제 -> 도커 레지스트리 로그인 -> 이미지 가져오기 -> 컨테이너 생성 -> 컨테이너 실행 */
             sh'''
             sshpass -p${SSH_PASS} ssh -T sigongweb@10.1.0.22 -p16215 -oStrictHostKeyChecking=no <<EOF
-            docker stop ${SERVER_NAME}_pro
-            docker rm ${SERVER_NAME}_pro
+            docker stop ${CONTAINER_NAME}_pro
+            docker rm ${CONTAINER_NAME}_pro
             docker login ${ACR_SERVER} -u ${ACR_ID} -p ${ACR_PASSWORD}
             docker pull ${ACR_SERVER}/node_js:${BUILD_NUMBER}
-            docker create --name ${SERVER_NAME}_pro -p 3000:3000 ${ACR_SERVER}/node_js:${BUILD_NUMBER}
-            docker start ${SERVER_NAME}_pro
+            docker create --name ${CONTAINER_NAME}_pro -p 3000:3000 ${ACR_SERVER}/node_js:${BUILD_NUMBER}
+            docker start ${CONTAINER_NAME}_pro
             sleep 20
-            docker exec ${SERVER_NAME}_pro ./send_alive_msg_to_slack.sh > /dev/null 2>&1
+            docker exec ${CONTAINER_NAME}_pro ./send_alive_msg_to_slack.sh > /dev/null 2>&1
             echo "done"
             EOF
             '''.stripIndent()
