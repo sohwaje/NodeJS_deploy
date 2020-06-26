@@ -127,7 +127,8 @@ stage('Deploy') {
             docker pull ${ACR_SERVER}/node_js:${BUILD_NUMBER}
             docker create --name ${SERVER_NAME}_pro -p 3000:3000 ${ACR_SERVER}/node_js:${BUILD_NUMBER}
             docker start ${SERVER_NAME}_pro
-            docker exec ${SERVER_NAME}_pro ./send_alive_msg_to_slack.sh
+            sleep 20
+            docker exec ${SERVER_NAME}_pro ./send_alive_msg_to_slack.sh >> /dev/null
             EOF
             '''.stripIndent()
         /* SLACK Configuration */
