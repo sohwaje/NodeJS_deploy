@@ -82,7 +82,7 @@ stage('Docker Build') {
         catch (Exception e) {
         /* SLACK Configuration */
             slackSend (channel: '#hiclass-build-deploy-alert', color: '#FF0000', message: "Docker BUILD Error:${e} Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-            }
+        }
      } else {
         println "Docker Build Skip"
     }
@@ -135,12 +135,12 @@ stage('Deploy') {
         /* SLACK Configuration */
             slackSend (channel: '#hiclass-build-deploy-alert', color: '#00FF00', message: "Deploy SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
             }
-            catch (Exception e) {
+        catch (Exception e) {
             /* SLACK Configuration */
               slackSend (channel: '#hiclass-build-deploy-alert', color: '#FF0000', message: "Deploy Error:${e} Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-              }
+        }
     } else {
         println "Docker Deploy Skip"
     }
-}
+  }
 }
