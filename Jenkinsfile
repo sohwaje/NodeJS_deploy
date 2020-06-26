@@ -128,7 +128,6 @@ stage('Deploy') {
             docker create --name ${SERVER_NAME}_pro -p 3000:3000 ${ACR_SERVER}/node_js:${BUILD_NUMBER}
             docker start ${SERVER_NAME}_pro
             sleep 10
-            chmod +x send_alive_msg_to_slack.sh
             ./send_alive_msg_to_slack.sh
             EOF
             '''.stripIndent()
