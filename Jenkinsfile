@@ -42,6 +42,9 @@ stage("Parameter Check", {
     println "  ACR_SERVER = $ACR_SERVER"
     println "  CONTAINER_NAME = $CONTAINER_NAME"
     println "  SSH_PASS = $SSH_PASS"
+    println "  SSH_USER = $SSH_USER"
+    println "  TARGET_IP = $TARGET_IP"
+    println "  SSH_PORT = $SSH_PORT"
 
 })
 
@@ -120,7 +123,7 @@ stage('Deploy') {
         /* .stripIndent() 멀티라인 실행 구현 */
         /* 배포할 서버에 ssh로 로그인 -> 기존 도커 컨테이너 중지 및 삭제 -> 도커 레지스트리 로그인 -> 이미지 가져오기 -> 컨테이너 생성 -> 컨테이너 실행 */
             sh'''
-            sshpass -p${SSH_PASS} ssh -T sigongweb@10.1.0.22 -p16215 -oStrictHostKeyChecking=no <<EOF
+            sshpass -p${SSH_PASS} ssh -T ${SSH_USER}@${TARGET_IP} -p${SSH_PORT} -oStrictHostKeyChecking=no <<EOF
             docker stop ${CONTAINER_NAME}_pro
             docker rm ${CONTAINER_NAME}_pro
             docker login ${ACR_SERVER} -u ${ACR_ID} -p ${ACR_PASSWORD}
