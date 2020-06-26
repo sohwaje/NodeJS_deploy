@@ -14,7 +14,7 @@ URL="http://127.0.0.1:3000"
 
 # URL 체크
 check(){
-  if [ $? = 0 ]; then # 쉘에서는 "=="가 맞지만, 도커에서는 "="를 쓴다.
+  if [ $? = 0 ]; then # 쉘에서는 "=="가 맞지만, Bourne shell에서는 "="를 쓴다.
     curl -X POST -H 'Content-type: application/json' --data "$URL_STATUS_OK" $WEBHOOK_ADDRESS > /dev/null 2>&1
   else
     curl -X POST -H 'Content-type: application/json' --data "$URL_STATUS_Error" $WEBHOOK_ADDRESS > /dev/null 2>&1
