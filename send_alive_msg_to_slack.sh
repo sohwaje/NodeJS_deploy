@@ -12,6 +12,7 @@ URL_STATUS_Error="{\"text\": \"ERROR: no response Date:  $DATE\"}"
 
 # URL
 URL="http://127.0.0.1:3000"
+
 # URL 체크
 function check {
   if [ $? == 0 ]; then
