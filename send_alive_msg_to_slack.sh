@@ -24,4 +24,5 @@ function check {
 
 # check 함수 실행
 curl -s -o "/dev/null" $1 $URL
+sleep 10
 check
