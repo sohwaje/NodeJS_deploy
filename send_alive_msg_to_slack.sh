@@ -1,7 +1,7 @@
 #!/bin/sh
-# 컨테이너가 실행되면 slack 채널로 "I'm Alive" 메시지를 보낸다.
+# 컨테이너가 실행 -> 앱 URL 체크 -> 성공 또는 실패 메시지를 slack 채널로 보낸다.
 
-# Slack 주소
+# Slack 웹 훅주소
 WEBHOOK_ADDRESS='https://hooks.slack.com/services/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'
 # 날짜
 DATE=$(date '+%Y-%m-%d %H:%M:%S')
