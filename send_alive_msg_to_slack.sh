@@ -32,10 +32,10 @@ slack_message(){
 function check_url() {
   curl -s -o "/dev/null" $URL
   if [ $? = 0 ]; then # Bash에서는 "=="가 맞지만, Bourne shell에서는 "="를 쓴다.
-    slack_message "$HOSTNAME container is running " true  # 성공
+    slack_message "container is running " true  # 성공
     exit 0
   else
-    slack_message "$HOSTNAME failure" false               # 실패
+    slack_message "failure" false               # 실패
     exit 1
   fi
 }
