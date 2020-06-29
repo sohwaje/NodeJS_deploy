@@ -7,7 +7,7 @@
 URL="http://127.0.0.1:3000"
 
 # Slack 웹 훅주소
-WEBHOOK_ADDRESS='https://hooks.slack.com/services/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'
+WEBHOOK_ADDRESS='https://'
 
 # 슬랙으로 메시지 보내기 함수
 slack_message(){
