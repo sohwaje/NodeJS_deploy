@@ -80,7 +80,7 @@ stage('Docker Build') {
             sh 'docker image build -t ${ACR_SERVER}/node_js:${BUILD_NUMBER} .'
        /* SLACK Configuration */
             slackSend (channel: '#hiclass-build-deploy-alert', color: '#00FF00', message: "Docker BUILD SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-            println "Docker Build End"
+            println "Docker Build End"job/testbuild/configure
         }
         catch (Exception e) {
         /* SLACK Configuration */
